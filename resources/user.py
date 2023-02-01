@@ -18,6 +18,8 @@ class UsersApi(Resource):
         else:
             return 'User not valid', 500
 
+
+class AddUserApi(Resource):
     @jwt_required()
     def post(self):
         try:
@@ -46,7 +48,7 @@ class UpdateUserApi(Resource):
             if admin["role"] == "admin":
                 body = request.get_json()
                 Details.objects.get(id=_id, added_by=identity).update(**body)
-                return 'Updated', 200
+                return {'Updated id': str(_id)}, 200
             else:
                 return 'Not Updated', 500
         except InvalidQueryError:
@@ -54,6 +56,8 @@ class UpdateUserApi(Resource):
         except DoesNotExist:
             raise UpdatingDetailsError
 
+
+class DeleteUserApi(Resource):
     @jwt_required()
     def delete(self, _id):
         try:
@@ -62,7 +66,7 @@ class UpdateUserApi(Resource):
             if admin["role"] == "admin":
                 user = Details.objects.get(id=_id, added_by=user_id)
                 user.delete()
-                return 'deleted', 200
+                return {'deleted id': str(_id)}, 200
             else:
                 return 'Only admin can delete', 500
         except DoesNotExist:
